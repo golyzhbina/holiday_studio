@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="access">Список всех ваших заказов</h1>
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Номер заказа</th>
+        <th scope="col">Название заказа</th>
+        <th scope="col">Описание заказа</th>
+        <th scope="col">Цена заказа</th>
+        <th scope="col">Заказчик</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for order, customer in orders_customers.items() %}
+    <tr>
+        <th scope="col">{{ order.id }}</th>
+        <th scope="col">{{ order.title }}</th>
+        <th scope="col">{{ order.describtion }}</th>
+        <th scope="col">{{ order.price }}</th>
+        <th scope="col">{{ customer }}</th>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
