@@ -5,7 +5,10 @@ from sqlalchemy.exc import IntegrityError
 
 from forms.create_client import CreateClientForm
 from forms.create_order import CreateOrderForm
-from forms.delete_order import DeleteOrder
+from forms.delete_order import DeleteOrderForm
+from forms.change_order_first import ChangeOrderFormFirst
+from forms.change_order_second import ChangeOrderFormSecond
+from forms.delete_client import DeleteClientForm
 from forms.login import LoginForm
 from models import AlchemyEncoder, Employee, Client, EmployeeOrder, ClientOrder
 from models import Order, create_session
@@ -63,7 +66,6 @@ def create_order():
     create_order_form = CreateOrderForm()
     if create_order_form.validate_on_submit():
         client = create_order_form.client_list.data
-        print(client)
         session = create_session()
         order = Order(price=create_order_form.price.data,
                       title=create_order_form.price.data,
@@ -105,6 +107,8 @@ def get_all_orders():
             client.append(session.query(Client.full_name).where(Client.id == id_client).first()[0])
         orders_clients[order] = " ".join(client)
 
+    session.close()
+
     return render_template("get_all_orders.html", orders_customers=orders_clients)
 
 
@@ -112,7 +116,7 @@ def get_all_orders():
 @login_required
 def delete_order():
 
-    form = DeleteOrder()
+    form = DeleteOrderForm()
     session = create_session()
     if form.validate_on_submit():
         order = form.order_list.data
@@ -128,9 +132,92 @@ def delete_order():
         for note in cli_order:
             session.delete(note)
             session.commit()
+
+        session.close()
         return redirect("/")
 
     return render_template("delete_order.html", form=form)
+
+
+@router.route("/change_order_choice", methods=["GET", "POST"])
+@login_required
+def change_order_choice():
+
+    change_order_form = ChangeOrderFormFirst()
+    if change_order_form.validate_on_submit():
+        changed_order = change_order_form.order_list.data
+        return redirect(f"/change_order_info/{changed_order.id}")
+
+    return render_template("change_order_first.html", form=change_order_form)
+
+
+@router.route("/change_order_info/<id_order>", methods=["GET", "POST"])
+@login_required
+def change_order(id_order):
+
+    change_order_form = ChangeOrderFormSecond()
+    session = create_session()
+    order = session.query(Order).where(Order.id == id_order).first()
+    if change_order_form.validate_on_submit():
+        order.title = change_order_form.title.data
+        order.price = change_order_form.price.data
+        order.describtion = change_order_form.describtion.data
+        session.commit()
+
+        client = change_order_form.client_list.data
+        client_order = session.query(ClientOrder).where(ClientOrder.id_order == id_order).first()
+        session.delete(client_order)
+        new_client_order = ClientOrder(id_client=client.id, id_order=id_order)
+
+        session.add(new_client_order)
+        session.commit()
+        session.close()
+        return redirect("/")
+
+    return render_template("change_order_second.html", form=change_order_form, order=order)
+
+
+@router.route("/get_all_clients", methods=["GET", "POST"])
+@login_required
+def get_all_clients():
+
+    session = create_session()
+
+    id_orders = session.query(EmployeeOrder.id_order).where(EmployeeOrder.id_employee == current_user.id).all()
+    id_orders = list(map(lambda x: x[0], id_orders))
+    clients = set()
+
+    for id_order in id_orders:
+        id_client = session.query(ClientOrder.id_client).where(ClientOrder.id_order == id_order).first()[0]
+        client = session.query(Client).where(Client.id == id_client).first()
+        clients.add(client)
+
+    session.close()
+
+    return render_template("get_all_clients.html", clients=list(clients))
+
+
+@router.route("/delete_client", methods=["GET", "POST"])
+@login_required
+def delete_client():
+
+    form = DeleteClientForm()
+    session = create_session()
+    if form.validate_on_submit():
+        client = form.client_list.data
+        session.delete(client)
+        session.commit()
+
+        client_order = session.query(ClientOrder).where(ClientOrder.id_client == client.id).all()
+        print(client_order)
+        for note in client_order:
+            session.delete(note)
+            session.commit()
+
+        session.close()
+        return redirect("/")
+
+    return render_template("delete_client.html", form=form)
 
 
 @router.route("/logout")

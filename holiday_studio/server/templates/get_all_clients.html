@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="access">Список всех ваших заказов</h1>
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Номер клиента</th>
+        <th scope="col">Имя</th>
+        <th scope="col">Телефон</th>
+        <th scope="col">email</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for client in clients %}
+    <tr>
+        <th scope="col">{{ client.id }}</th>
+        <th scope="col">{{ client.full_name }}</th>
+        <th scope="col">{{ client.phone }}</th>
+        <th scope="col">{{ client.email }}</th>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import SubmitField
 from wtforms_sqlalchemy.fields import QuerySelectField
-
+from .delete_order import DeleteOrderForm
 from models import Order, EmployeeOrder, create_session
 from flask_login import current_user
 
@@ -17,10 +17,8 @@ def get_orders():
     return orders
 
 
-class DeleteOrderForm(FlaskForm):
+class ChangeOrderFormFirst(DeleteOrderForm):
 
-    order_list = QuerySelectField("Заказ",
-                                   query_factory=get_orders,
-                                   get_pk=lambda order: order.id,
-                                   get_label=lambda order: order.title)
-    submit = SubmitField("Удалить")
+    submit = SubmitField("Изменить")
+
+
