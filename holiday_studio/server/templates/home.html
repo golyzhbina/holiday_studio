@@ -3,12 +3,15 @@
 {% block content %}
 <div>
     {% if current_user.is_authenticated %}
-        <a class="btn btn-primary" href="/create_client">Создать клиента</a>
-        <a class="btn btn-primary" href="/create_order">Создать заказ</a>
-        <a class="btn btn-primary" href="/get_all_orders">Получить все заказы</a>
-        <a class="btn btn-primary" href="/delete_order">Удалить заказ</a>
+    <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+        <a class="btn btn-warning" href="/create_client">Создать клиента</a>
+        <a class="btn btn-warning" href="/change_client_choice">Изменить клиента</a>
+        <a class="btn btn-dark" href="/create_order">Создать заказ</a>
+        <a class="btn btn-dark" href="/get_all_orders">Получить все заказы</a>
+        <a class="btn btn-dark" href="/delete_order">Удалить заказ</a>
     {% else %}
         <p class="font-weight-bold">Вы не авторизованы</p>
     {% endif %}
+    </div>
 </div>
 {% endblock %}

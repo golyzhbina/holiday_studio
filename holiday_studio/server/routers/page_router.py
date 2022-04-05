@@ -6,6 +6,8 @@ from sqlalchemy.exc import IntegrityError
 from forms.create_client import CreateClientForm
 from forms.create_order import CreateOrderForm
 from forms.delete_order import DeleteOrder
+from forms.change_client_first import ChangeClientFormFirst
+from forms.change_client_second import ChangeClientFormSecond
 from forms.login import LoginForm
 from models import AlchemyEncoder, Employee, Client, EmployeeOrder, ClientOrder
 from models import Order, create_session
@@ -132,6 +134,37 @@ def delete_order():
 
     return render_template("delete_order.html", form=form)
 
+
+
+@router.route("/change_client_choice", methods=["GET", "POST"])
+@login_required
+def change_client_choice():
+
+    change_client_form = ChangeClientFormFirst()
+    if change_client_form.validate_on_submit():
+        client = change_client_form.client_list.data
+        return redirect(f"/change_client_info/{client.id}")
+
+    return render_template("change_client_first.html", form=change_client_form)
+
+
+@router.route("/change_client_info/<id_client>", methods=["GET", "POST"])
+@login_required
+def change_client_info(id_client):
+
+    change_client_form = ChangeClientFormSecond()
+    session = create_session()
+    client = session.query(Client).where(Client.id == id_client).first()
+    if change_client_form.validate_on_submit():
+        client.full_name = change_client_form.full_name.data
+        client.phone = change_client_form.phone.data
+        client.email = change_client_form.email.data
+        client.age = change_client_form.age.data
+        session.commit()
+        session.close()
+        return redirect("/")
+
+    return render_template("change_client_second.html", form=change_client_form, client=client)
 
 @router.route("/logout")
 def logout():

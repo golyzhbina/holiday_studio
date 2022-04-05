@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="access">Создание клиента</h1>
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Номер клиента</th>
+        <th scope="col">Имя клиента</th>
+        <th scope="col">Телефон</th>
+        <th scope="col">Email</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <th scope="col">{{ client.id }}</th>
+        <th scope="col">{{ client.full_name }}</th>
+        <th scope="col">{{ client.phone }}</th>
+        <th scope="col">{{ client.email }}</th>
+    </tr>
+    </tbody>
+</table>
+<form action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.full_name.label }}<br>
+        {{ form.full_name(class="form-control") }}<br>
+        {% for error in form.full_name.errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.age.label }}<br>
+        {{ form.age(class="form-control") }}<br>
+        {% for error in form.age.errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.phone.label }}<br>
+        {{ form.phone(class="form-control") }}<br>
+        {% for error in form.phone.errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {% endfor %}
+    </p>
+    <p>
+        {{ form.email.label }}<br>
+        {{ form.email(class="form-control") }}<br>
+        {% for error in form.email.errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+        {% endfor %}
+    </p>
+    <p> {{ form.submit(type="submit", class="btn btn-primary") }}
+</form>
+{% endblock %}
