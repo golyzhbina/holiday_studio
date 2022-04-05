@@ -15,10 +15,8 @@ def get_clients():
     clients = set()
 
     for id_order in id_orders:
-        print(id_order)
-        id_client = session.query(ClientOrder.id_client).where(ClientOrder.id_order == id_order[0]).first()
-        print(id_client)
-        client = session.query(Client).where(Client.id == id_client).first()
+        id_client = session.query(ClientOrder).where(ClientOrder.id_order == id_order).first()
+        client = session.query(Client).where(Client.id == id_client.id_client).first()
         clients.add(client)
 
     session.close()

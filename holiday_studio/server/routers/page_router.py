@@ -9,7 +9,7 @@ from forms.delete_order import DeleteOrderForm
 from forms.change_order_first import ChangeOrderFormFirst
 from forms.change_order_second import ChangeOrderFormSecond
 from forms.delete_client import DeleteClientForm
-from forms.delete_order import DeleteOrder
+from forms.delete_order import DeleteOrderForm
 from forms.change_client_first import ChangeClientFormFirst
 from forms.change_client_second import ChangeClientFormSecond
 from forms.login import LoginForm
@@ -118,7 +118,7 @@ def get_all_orders():
 @login_required
 def delete_order():
 
-    form = DeleteOrder()
+    form = DeleteOrderForm()
     session = create_session()
     if form.validate_on_submit():
         order = form.order_list.data
@@ -220,7 +220,6 @@ def delete_client():
         return redirect("/")
 
     return render_template("delete_client.html", form=form)
-
 
 
 @router.route("/change_client_choice", methods=["GET", "POST"])

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <h1 class="access">Создание клиента</h1>
-<form action="" method="post" novalidate>
+<form class="base_form" method="post" novalidate>
     {{ form.hidden_tag() }}
     <p>
         {{ form.client_list.label }}<br>
@@ -12,6 +12,6 @@
     </div>
     {% endfor %}
     </p>
-    <p> {{ form.submit(type="submit", class="btn btn-primary") }}
+    <p> {{ form.submit(type="submit", class="btn btn-warning") }}
 </form>
 {% endblock %}
