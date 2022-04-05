@@ -71,7 +71,7 @@ def create_order():
         client = create_order_form.client_list.data
         print(client)
         session = create_session()
-        order = Order(price=create_order_form.price.data,
+        order = Order(price=create_order_form.title.data,
                       title=create_order_form.price.data,
                       describtion=create_order_form.describtion.data)
         # чтобы получить order_id сначала добавим в базу
@@ -160,6 +160,9 @@ def change_order(id_order):
     change_order_form = ChangeOrderFormSecond()
     session = create_session()
     order = session.query(Order).where(Order.id == id_order).first()
+    client_id = session.query(ClientOrder).where(ClientOrder.id_order == order.id).first()
+    client = session.query(Client).where(Client.id == client_id.id_client).first()
+    print(client)
     if change_order_form.validate_on_submit():
         order.title = change_order_form.title.data
         order.price = change_order_form.price.data
@@ -176,7 +179,7 @@ def change_order(id_order):
         session.close()
         return redirect("/")
 
-    return render_template("change_order_second.html", form=change_order_form, order=order)
+    return render_template("change_order_second.html", form=change_order_form, order=order, customer=client)
 
 
 @router.route("/get_all_clients", methods=["GET", "POST"])
