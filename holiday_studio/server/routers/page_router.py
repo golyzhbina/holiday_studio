@@ -9,6 +9,9 @@ from forms.delete_order import DeleteOrderForm
 from forms.change_order_first import ChangeOrderFormFirst
 from forms.change_order_second import ChangeOrderFormSecond
 from forms.delete_client import DeleteClientForm
+from forms.delete_order import DeleteOrder
+from forms.change_client_first import ChangeClientFormFirst
+from forms.change_client_second import ChangeClientFormSecond
 from forms.login import LoginForm
 from models import AlchemyEncoder, Employee, Client, EmployeeOrder, ClientOrder
 from models import Order, create_session
@@ -66,6 +69,7 @@ def create_order():
     create_order_form = CreateOrderForm()
     if create_order_form.validate_on_submit():
         client = create_order_form.client_list.data
+        print(client)
         session = create_session()
         order = Order(price=create_order_form.price.data,
                       title=create_order_form.price.data,
@@ -107,8 +111,6 @@ def get_all_orders():
             client.append(session.query(Client.full_name).where(Client.id == id_client).first()[0])
         orders_clients[order] = " ".join(client)
 
-    session.close()
-
     return render_template("get_all_orders.html", orders_customers=orders_clients)
 
 
@@ -116,7 +118,7 @@ def get_all_orders():
 @login_required
 def delete_order():
 
-    form = DeleteOrderForm()
+    form = DeleteOrder()
     session = create_session()
     if form.validate_on_submit():
         order = form.order_list.data
@@ -219,6 +221,37 @@ def delete_client():
 
     return render_template("delete_client.html", form=form)
 
+
+
+@router.route("/change_client_choice", methods=["GET", "POST"])
+@login_required
+def change_client_choice():
+
+    change_client_form = ChangeClientFormFirst()
+    if change_client_form.validate_on_submit():
+        client = change_client_form.client_list.data
+        return redirect(f"/change_client_info/{client.id}")
+
+    return render_template("change_client_first.html", form=change_client_form)
+
+
+@router.route("/change_client_info/<id_client>", methods=["GET", "POST"])
+@login_required
+def change_client_info(id_client):
+
+    change_client_form = ChangeClientFormSecond()
+    session = create_session()
+    client = session.query(Client).where(Client.id == id_client).first()
+    if change_client_form.validate_on_submit():
+        client.full_name = change_client_form.full_name.data
+        client.phone = change_client_form.phone.data
+        client.email = change_client_form.email.data
+        client.age = change_client_form.age.data
+        session.commit()
+        session.close()
+        return redirect("/")
+
+    return render_template("change_client_second.html", form=change_client_form, client=client)
 
 @router.route("/logout")
 def logout():

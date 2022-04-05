@@ -12,15 +12,15 @@
 </head>
 <body>
 <header>
-    <nav class="navbar navbar-light bg-light">
-        <h1>Студия праздника</h1>
+    <nav class="navbar navbar-dark bg-dark">
+        <my_h1>Студия праздника</my_h1>
         {% if current_user.is_authenticated %}
-            <a class="btn btn-primary" href="/logout">{{ current_user.full_name }}</a>
+            <a class="btn btn-warning" href="/logout">Выйти</a>
         {% else %}
-            <a class="btn btn-primary" href="/login">Войти</a>
+            <a class="btn btn-warning" href="/login">Войти</a>
         {% endif %}
     </nav>
-    <h4>Сделаем праздник за Вас!</h4>
+    <p class="text-center"><h4>Сделаем праздник за Вас!</h4></p>
 </header>
 <!-- Begin page content -->
 <main role="main" class="container">
